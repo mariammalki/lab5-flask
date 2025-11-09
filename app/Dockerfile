@@ -1,18 +1,17 @@
-# Utilise Python slim
-FROM python:3.11-slim
+# Image de base
+FROM python:3.12-slim
 
+# Dossier de travail
 WORKDIR /app
 
-# Copier requirements
-COPY requirements.txt .
-
-# Installer pip à jour et les dépendances
-RUN python -m pip install --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
-
-# Copier le code
+# Copier le code source
 COPY . .
 
+# Installer les dépendances
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Exposer le port Flask
 EXPOSE 5000
 
+# Démarrer l’application
 CMD ["python", "app.py"]

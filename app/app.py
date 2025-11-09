@@ -1,87 +1,44 @@
-import os
-import time
-from flask import Flask, request, redirect, url_for, render_template
-import psycopg
-from psycopg.rows import dict_row
-
-DB_HOST = os.environ.get('DB_HOST', 'host.docker.internal')
-DB_NAME = os.environ.get('DB_NAME', 'mydb')
-DB_USER = os.environ.get('DB_USER', 'myuser')
-DB_PASSWORD = os.environ.get('DB_PASSWORD', 'pass1234')
-DB_PORT = int(os.environ.get('DB_PORT', '5432'))
-
+from flask import Flask, render_template, request, redirect
+import psycopg2
 app = Flask(__name__)
 
-def get_conn():
-    return psycopg.connect(
-        host=DB_HOST,
-        dbname=DB_NAME,
-        user=DB_USER,
-        password=DB_PASSWORD,
-        port=DB_PORT,
-        connect_timeout=3,
-    )
+# Configuration de la connexion PostgreSQL
+DB_CONFIG = {
+    "host": "host.docker.internal",
+    "database": "mydb",
+    "user": "myuser",
+    "password": "pass1234",
+    "port": 5432
+}
 
-def wait_for_db(max_attempts=30, delay_seconds=2):
-    last_err = None
-    for i in range(1, max_attempts + 1):
-        try:
-            with get_conn() as conn:
-                with conn.cursor() as cur:
-                    cur.execute("SELECT 1")
-                return
-        except Exception as e:
-            last_err = e
-            print(f"[init] DB pas prête (tentative {i}/{max_attempts}) : {e}")
-            time.sleep(delay_seconds)
-    raise RuntimeError(f"Impossible de se connecter à la DB après {max_attempts} tentatives : {last_err}")
+def get_connection():
+    """Crée une connexion à la base PostgreSQL."""
+    return psycopg2.connect(**DB_CONFIG)
 
-def init_db():
-    wait_for_db()
-    with get_conn() as conn:
-        with conn.cursor() as cur:
-            cur.execute("""
-                CREATE TABLE IF NOT EXISTS users (
-                    id SERIAL PRIMARY KEY,
-                    name TEXT NOT NULL,
-                    email TEXT NOT NULL
-                );
-            """)
-        conn.commit()
-    print("[init] Table 'contacts' OK")
-
-@app.route("/healthz")
-def healthz():
-    try:
-        with get_conn() as conn:
-            with conn.cursor() as cur:
-                cur.execute("SELECT 1")
-        return "ok", 200
-    except Exception as e:
-        return str(e), 500
-
-@app.route("/", methods=["GET", "POST"])
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    if request.method == "POST":
-        name = request.form.get("name", "").strip()
-        email = request.form.get("email", "").strip()
-        if name and email:
-            with get_conn() as conn:
-                with conn.cursor() as cur:
-                    cur.execute(
-                        "INSERT INTO users (name, email) VALUES (%s, %s)",
-                        (name, email),
-                    )
-                conn.commit()
-        return redirect(url_for("index"))
+    """Page principale avec le formulaire et la liste des utilisateurs."""
+    conn = get_connection()
+    cur = conn.cursor()
 
-    with get_conn() as conn:
-        # row_factory pour avoir des dicts (équivalent DictCursor)
-        with conn.cursor(row_factory=dict_row) as cur:
-            cur.execute("SELECT name, email FROM users ORDER BY id DESC")
-            rows = cur.fetchall()
-    return render_template("index.html", rows=rows)
+    # Si le formulaire est soumis
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        cur.execute("INSERT INTO users (name, email) VALUES (%s, %s)", (name, email))
+        conn.commit()
+        cur.close()
+        conn.close()
+        return redirect('/')  # redirige vers la page principale après insertion
 
-if __name__ == "__main__":
-    init_db()
-    app.run(host="0.0.0.0", port=5000)
+    # Sinon, afficher la liste des utilisateurs
+    cur.execute("SELECT * FROM users ORDER BY id ASC")
+    rows = cur.fetchall()
+    cur.close()
+    conn.close()
+
+    return render_template('index.html', users=rows)
+
+if __name__ == '__main__':
+    # L'application tourne sur le port 5000
+    app.run(host='0.0.0.0', port=5000, debug=True)
