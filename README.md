@@ -3,7 +3,7 @@
 ## 1. Project Overview
 This lab demonstrates deploying a two-tier web application on a K3s cluster:
 - **Frontend:** Flask web application with a simple form to insert and display user data.
-- **Backend:** postgresql database, internal to the cluster (ClusterIP).
+- **Backend:** PostgreSQL, database, internal to the cluster (ClusterIP).
 - **No Persistent Volumes or ConfigMaps** are used in this lab.
 
 ## 2. Architecture
