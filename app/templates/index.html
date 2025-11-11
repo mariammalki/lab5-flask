@@ -7,10 +7,10 @@
         body {
             font-family: Arial, sans-serif;
             margin: 40px;
-            background-color: #e0f7fa; /* Couleur de fond modifiée */
+            background-color: #e0f7fa;
         }
         h1 {
-            color: #006064; /* Couleur du titre */
+            color: #006064;
         }
         form {
             margin-bottom: 20px;
@@ -26,10 +26,10 @@
             width: 95%;
             padding: 10px;
             border-radius: 5px;
-            border: 1px solid #0097a7; /* Couleur bordure modifiée */
+            border: 1px solid #0097a7;
         }
         button {
-            background-color: #00838f; /* Couleur bouton modifiée */
+            background-color: #00838f;
             color: white;
             border: none;
             padding: 10px 15px;
@@ -38,7 +38,7 @@
             transition: background 0.3s;
         }
         button:hover {
-            background-color: #006064; /* Couleur au survol */
+            background-color: #006064;
         }
         .user-list {
             margin-top: 20px;
@@ -68,6 +68,7 @@
     <div class="user-list">
         {% for user in users %}
         <div class="user-card">
+            <p><strong>ID :</strong> {{ user[0] }}</p>
             <p><strong>Nom :</strong> {{ user[1] }}</p>
             <p><strong>Email :</strong> {{ user[2] }}</p>
         </div>
