@@ -6,11 +6,11 @@ app = Flask(__name__)
 
 # 🔧 Configuration PostgreSQL via variables d'environnement
 DB_CONFIG = {
-    "host": "host.docker.internal",
-    "database": "mydb",
-    "user": "myuser",
-    "password": "pass1234",
-    "port": 5432
+    "host": os.environ.get("DB_HOST", "db-service"),  # nom du service PostgreSQL
+    "database": os.environ.get("DB_NAME", "mydb"),
+    "user": os.environ.get("DB_USER", "myuser"),
+    "password": os.environ.get("DB_PASSWORD", "pass1234"),
+    "port": int(os.environ.get("DB_PORT", 5432))
 }
 
 def get_connection():
@@ -42,5 +42,5 @@ def index():
     return render_template('index.html', users=rows)
 
 if __name__ == '__main__':
-   
+    # L'application tourne sur le port 5000
     app.run(host='0.0.0.0', port=5000, debug=True)
