@@ -42,5 +42,5 @@ def index():
     return render_template('index.html', users=rows)
 
 if __name__ == '__main__':
-    # L'application tourne sur le port 5000
+   
     app.run(host='0.0.0.0', port=5000, debug=True)
