@@ -1,14 +1,16 @@
 from flask import Flask, render_template, request, redirect
 import psycopg2
+import os
+
 app = Flask(__name__)
 
-# Configuration de la connexion PostgreSQL
+# 🔧 Configuration PostgreSQL via variables d'environnement
 DB_CONFIG = {
-    "host": "host.docker.internal",
-    "database": "mydb",
-    "user": "myuser",
-    "password": "pass1234",
-    "port": 5432
+    "host": os.environ.get("DB_HOST", "db-service"),  
+    "database": os.environ.get("DB_NAME", "mydb"),
+    "user": os.environ.get("DB_USER", "myuser"),
+    "password": os.environ.get("DB_PASSWORD", "pass1234"),
+    "port": int(os.environ.get("DB_PORT", 5432))
 }
 
 def get_connection():
@@ -21,17 +23,17 @@ def index():
     conn = get_connection()
     cur = conn.cursor()
 
-    # Si le formulaire est soumis
     if request.method == 'POST':
-        name = request.form['name']
-        email = request.form['email']
-        cur.execute("INSERT INTO users (name, email) VALUES (%s, %s)", (name, email))
-        conn.commit()
-        cur.close()
-        conn.close()
-        return redirect('/')  # redirige vers la page principale après insertion
+        name = request.form.get('name', '').strip()
+        email = request.form.get('email', '').strip()
+        if name and email:
+            cur.execute(
+                "INSERT INTO users (name, email) VALUES (%s, %s)",
+                (name, email)
+            )
+            conn.commit()
+        return redirect('/')
 
-    # Sinon, afficher la liste des utilisateurs
     cur.execute("SELECT * FROM users ORDER BY id ASC")
     rows = cur.fetchall()
     cur.close()
