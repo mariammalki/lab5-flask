@@ -70,6 +70,10 @@ Take screenshots for documentation:
 
 Form submission: docs/screenshots/formulaire-rempli.png
 
+Je me connecte au pod db-deployment pour tester que les données saisies dans le formulaire,  le nom et l’e-mail, apparaissent correctement dans la base de données:
+
+docs/screenshots/test lab5.png
+
 ---
 ## 6. Notes
 
