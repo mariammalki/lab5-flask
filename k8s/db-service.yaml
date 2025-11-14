@@ -11,4 +11,8 @@ spec:
   ports:
     - port: 5432
       targetPort: 5432
+<<<<<<< HEAD
   type: ClusterIP
+=======
+  type: ClusterIP
+>>>>>>> 723cf8c (commit)

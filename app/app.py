@@ -6,7 +6,11 @@ app = Flask(__name__)
 
 # 🔧 Configuration PostgreSQL via variables d'environnement
 DB_CONFIG = {
+<<<<<<< HEAD
     "host": os.environ.get("DB_HOST", "db-service"),  
+=======
+    "host": os.environ.get("DB_HOST", "db-service"),  # nom du service PostgreSQL
+>>>>>>> 723cf8c (commit)
     "database": os.environ.get("DB_NAME", "mydb"),
     "user": os.environ.get("DB_USER", "myuser"),
     "password": os.environ.get("DB_PASSWORD", "pass1234"),
