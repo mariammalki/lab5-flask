@@ -68,11 +68,11 @@ Submit and verify that the data appears in the list below.
 
 Take screenshots for documentation:
 
-Form submission: docs/screenshots/formulaire-rempli.png
+Form submission: ![Formulaire](docs/screenshots/formulaire rempli.png)
 
 Je me connecte au pod db-deployment pour tester que les données saisies dans le formulaire,  le nom et l’e-mail, apparaissent correctement dans la base de données:
 
-docs/screenshots/test lab5.png
+![Formulaire](docs/screenshots/test lab5.png)
 
 ---
 ## 6. Notes
